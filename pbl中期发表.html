@@ -1,0 +1,1416 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>センサ歯ブラシ中間発表</title>
+  <style>
+    :root {
+      --bg: #eef5f3;
+      --paper: #ffffff;
+      --ink: #183036;
+      --muted: #62757c;
+      --line: #d4e7e2;
+      --teal: #0d817a;
+      --deep: #0e3f42;
+      --mint: #35c1ad;
+      --mint-soft: #e4f5f1;
+      --coral: #e8654f;
+      --coral-soft: #fde8e1;
+      --gold: #d69a2d;
+      --blue: #3b73a4;
+      --shadow: 0 18px 48px rgba(18, 47, 46, .14);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      min-height: 100%;
+      color: var(--ink);
+      background: radial-gradient(circle at 12% 0%, rgba(53, 193, 173, .18), transparent 30%),
+        radial-gradient(circle at 86% 12%, rgba(232, 101, 79, .12), transparent 28%),
+        var(--bg);
+      font-family: "Yu Gothic", "Hiragino Kaku Gothic ProN", Meiryo, "Segoe UI", sans-serif;
+    }
+
+    body {
+      overflow: hidden;
+    }
+
+    .deck {
+      width: 100vw;
+      height: 100vh;
+      padding: 24px;
+    }
+
+    .slide {
+      display: none;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      border: 1px solid rgba(24, 48, 54, .08);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, .97);
+      box-shadow: var(--shadow);
+    }
+
+    .slide.active {
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      gap: 18px;
+      padding: clamp(28px, 4.4vw, 54px);
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 24px;
+    }
+
+    .eyebrow {
+      margin: 0 0 10px;
+      color: var(--teal);
+      font-size: clamp(.78rem, 1.3vw, .92rem);
+      font-weight: 900;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    h1,
+    h2,
+    h3,
+    p {
+      margin: 0;
+    }
+
+    h1 {
+      max-width: 840px;
+      font-size: clamp(2.2rem, 5.3vw, 4.6rem);
+      line-height: 1.08;
+      letter-spacing: 0;
+      font-weight: 900;
+    }
+
+    h2 {
+      max-width: 930px;
+      font-size: clamp(1.72rem, 3.55vw, 2.9rem);
+      line-height: 1.15;
+      letter-spacing: 0;
+      font-weight: 900;
+    }
+
+    h3 {
+      font-size: clamp(1.02rem, 1.65vw, 1.32rem);
+      line-height: 1.34;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      min-height: 34px;
+      padding: 6px 12px;
+      border: 1px solid rgba(13, 129, 122, .2);
+      border-radius: 999px;
+      color: var(--teal);
+      background: var(--mint-soft);
+      font-size: .85rem;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .content {
+      display: grid;
+      min-height: 0;
+      align-content: center;
+      gap: 18px;
+    }
+
+    .app-slide .content {
+      align-content: start;
+    }
+
+    .lead {
+      max-width: 880px;
+      font-size: clamp(1.06rem, 1.9vw, 1.38rem);
+      line-height: 1.62;
+      font-weight: 700;
+      color: #263b40;
+    }
+
+    .muted {
+      color: var(--muted);
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .panel {
+      min-width: 0;
+      padding: clamp(17px, 2vw, 24px);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+    }
+
+    .panel h3 {
+      margin-bottom: 10px;
+    }
+
+    .panel p,
+    .panel li {
+      color: #2f4449;
+      font-size: clamp(.9rem, 1.35vw, 1.02rem);
+      line-height: 1.56;
+    }
+
+    ul {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .bullets li {
+      position: relative;
+      margin-bottom: 10px;
+      padding-left: 22px;
+    }
+
+    .bullets li:last-child {
+      margin-bottom: 0;
+    }
+
+    .bullets li::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: .7em;
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: var(--teal);
+    }
+
+    .title-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.02fr) minmax(300px, .98fr);
+      gap: 44px;
+      align-items: center;
+      height: 100%;
+    }
+
+    .title-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 28px;
+    }
+
+    .title-info {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 16px;
+      max-width: 760px;
+      margin-top: 28px;
+      color: var(--muted);
+      font-size: clamp(.78rem, 1.1vw, .92rem);
+      font-weight: 800;
+      line-height: 1.3;
+    }
+
+    .title-info span {
+      display: inline-flex;
+      align-items: center;
+      white-space: nowrap;
+    }
+
+    .title-info span::before {
+      content: "";
+      display: inline-block;
+      width: 7px;
+      height: 7px;
+      margin-right: 8px;
+      border-radius: 50%;
+      background: var(--mint);
+    }
+
+    .title-copy h1 {
+      max-width: 740px;
+      font-size: clamp(2.45rem, 4.65vw, 4.05rem);
+    }
+
+    .title-copy .lead {
+      max-width: 660px;
+    }
+
+    .toothbrush-visual {
+      position: relative;
+      width: min(100%, 430px);
+      aspect-ratio: 1 / .96;
+      margin: 0 auto;
+    }
+
+    .toothbrush-visual::before {
+      content: "";
+      position: absolute;
+      inset: 12% 0 0 2%;
+      border-radius: 50%;
+      background: radial-gradient(circle at 50% 42%, rgba(53, 193, 173, .18), rgba(255,255,255,0) 62%);
+      filter: blur(2px);
+    }
+
+    .brush-handle {
+      position: absolute;
+      left: 16%;
+      top: 46%;
+      width: 74%;
+      height: 18%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #cde9e3, #eef8f6);
+      border: 2px solid rgba(13, 129, 122, .2);
+    }
+
+    .brush-head {
+      position: absolute;
+      left: 8%;
+      top: 38%;
+      width: 25%;
+      height: 33%;
+      border-radius: 22px;
+      background: #cde9e3;
+      border: 2px solid rgba(13, 129, 122, .2);
+    }
+
+    .bristles {
+      position: absolute;
+      left: 9%;
+      top: 20%;
+      width: 24%;
+      height: 24%;
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 6px;
+      align-items: end;
+    }
+
+    .bristles span {
+      display: block;
+      height: 72%;
+      border-radius: 6px 6px 0 0;
+      background: #9bc9c2;
+    }
+
+    .sensor-dot {
+      position: absolute;
+      display: grid;
+      place-items: center;
+      width: 54px;
+      height: 54px;
+      border: 4px solid #fff;
+      border-radius: 50%;
+      color: #fff;
+      background: var(--teal);
+      box-shadow: 0 0 0 9px rgba(13, 129, 122, .12);
+      font-weight: 900;
+    }
+
+    .sensor-dot.a { left: 15%; top: 42%; }
+    .sensor-dot.b { left: 44%; top: 41%; background: var(--gold); color: var(--ink); box-shadow: 0 0 0 9px rgba(214, 154, 45, .14); }
+    .sensor-dot.c { left: 72%; top: 41%; background: var(--coral); box-shadow: 0 0 0 9px rgba(232, 101, 79, .14); }
+
+    .tooth {
+      position: absolute;
+      right: 12%;
+      bottom: 2%;
+      width: 112px;
+      height: 130px;
+      border-radius: 54% 54% 42% 42%;
+      background: #fff;
+      border: 3px solid var(--deep);
+      box-shadow: 0 14px 28px rgba(14, 63, 66, .12);
+    }
+
+    .tooth::before,
+    .tooth::after {
+      content: "";
+      position: absolute;
+      bottom: -22px;
+      width: 40px;
+      height: 54px;
+      border: 3px solid var(--deep);
+      border-top: 0;
+      background: #fff;
+    }
+
+    .tooth::before {
+      left: 12px;
+      border-radius: 0 0 22px 28px;
+    }
+
+    .tooth::after {
+      right: 12px;
+      border-radius: 0 0 28px 22px;
+    }
+
+    .mark {
+      position: absolute;
+      left: 48px;
+      top: 50px;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: var(--coral);
+      opacity: .85;
+    }
+
+    .metric {
+      padding: 22px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+    }
+
+    .metric strong {
+      display: block;
+      margin-bottom: 7px;
+      color: var(--teal);
+      font-size: clamp(2.1rem, 4.3vw, 3rem);
+      line-height: 1;
+    }
+
+    .question {
+      padding: 18px 22px;
+      border-left: 7px solid var(--coral);
+      border-radius: 8px;
+      background: var(--coral-soft);
+      color: #763427;
+      font-size: clamp(1.02rem, 1.7vw, 1.2rem);
+      line-height: 1.56;
+      font-weight: 900;
+    }
+
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .step {
+      position: relative;
+      min-height: 160px;
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+    }
+
+    .step-num,
+    .sensor-num {
+      display: inline-grid;
+      place-items: center;
+      width: 36px;
+      height: 36px;
+      margin-bottom: 12px;
+      border-radius: 50%;
+      color: #fff;
+      background: var(--teal);
+      font-weight: 900;
+    }
+
+    .step:nth-child(2) .step-num,
+    .sensor:nth-child(2) .sensor-num,
+    .sensor:nth-child(5) .sensor-num {
+      background: var(--coral);
+    }
+
+    .step:nth-child(3) .step-num,
+    .sensor:nth-child(3) .sensor-num {
+      background: var(--gold);
+      color: var(--ink);
+    }
+
+    .step p,
+    .sensor p {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: clamp(.88rem, 1.25vw, .96rem);
+      line-height: 1.5;
+    }
+
+    .sensor {
+      min-height: 138px;
+      padding: 17px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+    }
+
+    .app-demo {
+      display: grid;
+      grid-template-columns: .82fr 1.18fr;
+      gap: 20px;
+      align-items: center;
+    }
+
+    .phone {
+      width: 238px;
+      max-width: 100%;
+      min-height: 320px;
+      margin: 0 auto;
+      padding: 14px;
+      border: 3px solid var(--deep);
+      border-radius: 26px;
+      background: #f8fbfa;
+      box-shadow: 0 22px 38px rgba(14, 63, 66, .16);
+    }
+
+    .speaker {
+      width: 74px;
+      height: 7px;
+      margin: 0 auto 14px;
+      border-radius: 999px;
+      background: rgba(14, 63, 66, .22);
+    }
+
+    .score {
+      display: grid;
+      place-items: center;
+      width: 118px;
+      height: 118px;
+      margin: 0 auto 14px;
+      border: 13px solid var(--teal);
+      border-radius: 50%;
+      font-size: 2.25rem;
+      font-weight: 900;
+    }
+
+    .score small {
+      font-size: 1rem;
+      color: var(--teal);
+    }
+
+    .tooth-map {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 7px;
+      margin-top: 12px;
+    }
+
+    .tile {
+      aspect-ratio: 1;
+      border-radius: 7px;
+      background: #4fa33d;
+    }
+
+    .tile.warn { background: var(--gold); }
+    .tile.alert { background: var(--coral); }
+
+    .oral-3d-card {
+      position: relative;
+      width: 328px;
+      max-width: 100%;
+      height: 348px;
+      margin: 0 auto;
+      overflow: hidden;
+      border: 2px solid rgba(13, 129, 122, .22);
+      border-radius: 8px;
+      background:
+        radial-gradient(circle at 50% 44%, rgba(53, 193, 173, .18), transparent 34%),
+        linear-gradient(180deg, #f8fffd, #e8f6f3);
+      box-shadow: 0 22px 40px rgba(14, 63, 66, .14);
+      perspective: 760px;
+    }
+
+    .oral-3d-title {
+      position: absolute;
+      left: 18px;
+      top: 14px;
+      z-index: 3;
+      color: var(--deep);
+      font-weight: 900;
+      font-size: .95rem;
+    }
+
+    .scan-plane {
+      position: absolute;
+      left: 25px;
+      right: 25px;
+      top: 70px;
+      bottom: 34px;
+      transform: rotateX(57deg) rotateZ(-7deg);
+      transform-style: preserve-3d;
+      border-radius: 50%;
+      background: radial-gradient(ellipse at center, rgba(255,255,255,.96), rgba(215,239,234,.52) 58%, transparent 61%);
+      box-shadow: inset 0 0 0 2px rgba(13, 129, 122, .18), 0 28px 34px rgba(14, 63, 66, .12);
+    }
+
+    .scan-plane::before,
+    .scan-plane::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      border-radius: 50%;
+      border: 2px dashed rgba(13, 129, 122, .2);
+    }
+
+    .scan-plane::before {
+      width: 74%;
+      height: 64%;
+    }
+
+    .scan-plane::after {
+      width: 46%;
+      height: 36%;
+    }
+
+    .scan-beam {
+      position: absolute;
+      left: 14%;
+      right: 14%;
+      top: 52%;
+      z-index: 4;
+      height: 3px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, transparent, rgba(53, 193, 173, .98), transparent);
+      box-shadow: 0 0 18px rgba(53, 193, 173, .76);
+      transform: rotate(-7deg);
+    }
+
+    .arch-3d {
+      position: absolute;
+      left: 50%;
+      z-index: 3;
+      width: 250px;
+      height: 92px;
+      transform: translateX(-50%) rotateX(58deg);
+      transform-style: preserve-3d;
+    }
+
+    .arch-3d.upper {
+      top: 82px;
+    }
+
+    .arch-3d.lower {
+      top: 184px;
+      transform: translateX(-50%) rotateX(58deg) rotateZ(180deg);
+    }
+
+    .tooth3d {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 25px;
+      height: 36px;
+      border: 1px solid rgba(14, 63, 66, .18);
+      border-radius: 10px 10px 14px 14px;
+      background: linear-gradient(150deg, #fff 0%, #f4fbf8 52%, #dfece8 100%);
+      box-shadow:
+        inset -5px -6px 0 rgba(14, 63, 66, .07),
+        0 9px 12px rgba(14, 63, 66, .16);
+      transform:
+        translate(var(--x), var(--y))
+        rotate(var(--r))
+        translateZ(var(--z));
+    }
+
+    .tooth3d::after {
+      content: "";
+      position: absolute;
+      left: 5px;
+      right: 5px;
+      bottom: 5px;
+      height: 8px;
+      border-radius: 999px;
+      background: #4fa33d;
+      opacity: .82;
+    }
+
+    .tooth3d.warn::after {
+      background: var(--gold);
+    }
+
+    .tooth3d.alert::after {
+      background: var(--coral);
+    }
+
+    .tooth3d.crack::before {
+      content: "";
+      position: absolute;
+      left: 12px;
+      top: 5px;
+      width: 2px;
+      height: 22px;
+      border-radius: 99px;
+      background: rgba(232, 101, 79, .8);
+      transform: rotate(18deg);
+    }
+
+    .tooth-hotspot {
+      cursor: help;
+      outline: none;
+      animation: toothPulse 1.7s ease-in-out infinite;
+    }
+
+    .tooth3d.wisdom {
+      width: 29px;
+      height: 39px;
+      border-color: rgba(139, 53, 40, .32);
+    }
+
+    .tooth-hotspot:focus {
+      box-shadow:
+        inset -5px -6px 0 rgba(14, 63, 66, .07),
+        0 0 0 4px rgba(53, 193, 173, .5),
+        0 9px 12px rgba(14, 63, 66, .16);
+    }
+
+    @keyframes toothPulse {
+      0%, 100% { filter: drop-shadow(0 0 0 rgba(232, 101, 79, .0)); }
+      50% { filter: drop-shadow(0 0 8px rgba(232, 101, 79, .75)); }
+    }
+
+    .oral-detail {
+      position: absolute;
+      left: 16px;
+      right: 16px;
+      bottom: 42px;
+      z-index: 8;
+      display: none;
+      pointer-events: none;
+      padding: 12px 14px;
+      border: 1px solid rgba(232, 101, 79, .28);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, .96);
+      box-shadow: 0 14px 30px rgba(14, 63, 66, .16);
+      color: var(--ink);
+      font-size: .78rem;
+      line-height: 1.45;
+    }
+
+    .oral-detail.visible {
+      display: block;
+    }
+
+    .oral-detail h4 {
+      margin: 0 0 6px;
+      color: #8b3528;
+      font-size: .9rem;
+    }
+
+    .oral-detail p {
+      margin: 0 0 5px;
+      color: #344a50;
+    }
+
+    .oral-detail strong {
+      color: var(--teal);
+    }
+
+    .map-legend {
+      position: absolute;
+      left: 18px;
+      right: 18px;
+      bottom: 11px;
+      z-index: 5;
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      color: var(--muted);
+      font-size: .76rem;
+      font-weight: 800;
+    }
+
+    .map-legend span {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .map-legend i {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      border-radius: 3px;
+      background: #4fa33d;
+    }
+
+    .map-legend .warn i { background: var(--gold); }
+    .map-legend .alert i { background: var(--coral); }
+
+    .map-chip {
+      position: absolute;
+      right: 16px;
+      top: 16px;
+      z-index: 5;
+      padding: 6px 9px;
+      border: 1px solid rgba(232, 101, 79, .25);
+      border-radius: 999px;
+      color: #8b3528;
+      background: var(--coral-soft);
+      font-size: .76rem;
+      font-weight: 900;
+    }
+
+    .oral-stats {
+      position: absolute;
+      left: 16px;
+      right: 16px;
+      bottom: 40px;
+      z-index: 6;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 7px;
+      pointer-events: none;
+    }
+
+    .oral-stat {
+      padding: 7px 8px;
+      border: 1px solid rgba(13, 129, 122, .16);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, .9);
+      box-shadow: 0 6px 14px rgba(14, 63, 66, .08);
+    }
+
+    .oral-stat span {
+      display: block;
+      color: var(--muted);
+      font-size: .64rem;
+      font-weight: 900;
+      line-height: 1.2;
+    }
+
+    .oral-stat strong {
+      display: block;
+      margin-top: 3px;
+      color: var(--teal);
+      font-size: .98rem;
+      line-height: 1;
+    }
+
+    .oral-stat.warn strong {
+      color: var(--gold);
+    }
+
+    .oral-stat.alert strong {
+      color: var(--coral);
+    }
+
+    .sdg-grid {
+      display: grid;
+      grid-template-columns: minmax(0, .72fr);
+      gap: 18px;
+      justify-content: center;
+    }
+
+    .sdg {
+      min-height: 198px;
+      padding: 20px;
+      border-radius: 8px;
+      color: #fff;
+    }
+
+    .sdg strong {
+      display: block;
+      margin-bottom: 10px;
+      font-size: 2.6rem;
+      line-height: 1;
+    }
+
+    .sdg h3 {
+      margin-bottom: 10px;
+    }
+
+    .sdg p {
+      color: rgba(255, 255, 255, .94);
+      font-size: clamp(.9rem, 1.25vw, 1rem);
+      line-height: 1.5;
+    }
+
+    .sdg.three { background: #4c9f38; }
+    .sdg.ten { background: #dd1367; }
+    .sdg.four { background: #c5192d; }
+
+    .society {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr auto 1fr;
+      gap: 12px;
+      align-items: stretch;
+    }
+
+    .arrow {
+      display: grid;
+      place-items: center;
+      color: var(--mint);
+      font-size: 2.3rem;
+      font-weight: 900;
+    }
+
+    footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 18px;
+      color: var(--muted);
+      font-size: .8rem;
+    }
+
+    .controls {
+      position: fixed;
+      right: 34px;
+      bottom: 30px;
+      display: flex;
+      gap: 10px;
+      z-index: 5;
+    }
+
+    button {
+      display: grid;
+      place-items: center;
+      width: 42px;
+      height: 42px;
+      border: 1px solid rgba(24, 48, 54, .16);
+      border-radius: 50%;
+      color: var(--ink);
+      background: rgba(255, 255, 255, .92);
+      box-shadow: 0 8px 18px rgba(14, 63, 66, .12);
+      cursor: pointer;
+      font-size: 1.2rem;
+      font-weight: 900;
+    }
+
+    button:hover {
+      color: var(--teal);
+      border-color: var(--teal);
+    }
+
+    .notes {
+      position: fixed;
+      left: 50%;
+      bottom: 28px;
+      z-index: 6;
+      display: none;
+      width: min(780px, calc(100vw - 230px));
+      max-height: 29vh;
+      overflow: auto;
+      transform: translateX(-50%);
+      padding: 16px 18px;
+      border: 1px solid rgba(24, 48, 54, .16);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, .96);
+      box-shadow: 0 16px 40px rgba(14, 63, 66, .18);
+      color: #283d42;
+      font-size: .93rem;
+      line-height: 1.65;
+    }
+
+    .notes.visible {
+      display: block;
+    }
+
+    @media (max-width: 840px) {
+      body {
+        overflow: auto;
+      }
+
+      .deck {
+        height: auto;
+        min-height: 100vh;
+        padding: 10px;
+      }
+
+      .slide {
+        min-height: calc(100vh - 20px);
+      }
+
+      .slide.active {
+        overflow: auto;
+        padding: 24px 20px 72px;
+      }
+
+      header {
+        display: block;
+      }
+
+      header .tag {
+        margin-top: 12px;
+      }
+
+      .content {
+        align-content: start;
+      }
+
+      .title-layout,
+      .grid-2,
+      .grid-3,
+      .grid-4,
+      .flow,
+      .app-demo,
+      .sdg-grid,
+      .society {
+        grid-template-columns: 1fr;
+      }
+
+      .arrow {
+        display: none;
+      }
+
+      .controls {
+        right: 16px;
+        bottom: 16px;
+      }
+
+      .notes {
+        left: 10px;
+        right: 10px;
+        bottom: 68px;
+        width: auto;
+        transform: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="deck">
+    <section class="slide active" data-notes="开头不要像商品发布会，可以说：这是一个构想，不是医疗器械设计。想法是把每天刷牙这件事变成口腔健康的观察机会。">
+      <div class="title-layout">
+        <div class="title-copy">
+          <p class="eyebrow">Society 5.0 Sensor Proposal</p>
+          <h1>3D口腔マップを作るセンサ歯ブラシの提案</h1>
+          <p class="lead" style="margin-top: 22px;">毎日の歯みがきで口腔環境をスキャンし、歯面ごとの清掃度や健康状態の変化に早く気づける仕組みを考えています。</p>
+          <div class="title-meta">
+            <span class="tag">Society 5.0</span>
+            <span class="tag">センサ活用</span>
+            <span class="tag">3D口腔マップ</span>
+          </div>
+          <div class="title-info">
+            <span>第8回 PBL 個人中間発表会</span>
+            <span>東北大学 文学研究科 行動科学研究室</span>
+            <span>付 郁</span>
+            <span>2026年6月17日（水）14:00-15:30</span>
+          </div>
+        </div>
+        <div class="toothbrush-visual" aria-hidden="true">
+          <div class="bristles"><span></span><span></span><span></span><span></span><span></span><span></span></div>
+          <div class="brush-head"></div>
+          <div class="brush-handle"></div>
+          <div class="sensor-dot a">光</div>
+          <div class="sensor-dot b">pH</div>
+          <div class="sensor-dot c">IMU</div>
+          <div class="tooth"><div class="mark"></div></div>
+        </div>
+      </div>
+      <footer>
+        <span>PBL 中間発表</span>
+        <span>01 / 09</span>
+      </footer>
+    </section>
+
+    <section class="slide" data-notes="ここは自分の問題意識として話します。虫歯だけに限定せず、口の中は自分では見えにくいという生活上の不安から入ると自然です。">
+      <header>
+        <div>
+          <p class="eyebrow">着想の出発点</p>
+          <h2>口の中の状態は、自分では見えにくい</h2>
+        </div>
+        <span class="tag">自分の経験</span>
+      </header>
+      <div class="content grid-2">
+        <div class="panel">
+          <h3>感じた困りごと</h3>
+          <ul class="bullets">
+            <li>どの部分が磨けていないか、自分では分かりにくい</li>
+            <li>虫歯、歯ぐきの炎症・歯周病リスク、歯のひびなどは初期に気づきにくい</li>
+            <li>歯科検診までの間に、口腔状態の変化を見逃す不安がある</li>
+            <li>痛みや違和感が出てからでは、治療の負担が大きくなりやすい</li>
+          </ul>
+        </div>
+        <div class="panel">
+          <h3>考えた方向性</h3>
+          <p>歯科医院だけで確認するのではなく、毎日使う歯ブラシで口腔内を3Dマップ化し、変化に早く気づければ、生活の安心につながるのではないか。</p>
+        </div>
+      </div>
+      <footer>
+        <span>より幸せ・より便利・生活が豊かになる視点</span>
+        <span>02 / 09</span>
+      </footer>
+    </section>
+
+    <section class="slide" data-notes="ここではデザイン思考を明示します。まだ本格的なユーザー調査はしていないので、自分の経験から作った仮説として話します。">
+      <header>
+        <div>
+          <p class="eyebrow">デザイン思考の視点</p>
+          <h2>「口の中を見える化したい」という問いから考える</h2>
+        </div>
+        <span class="tag">課題創造</span>
+      </header>
+      <div class="content">
+        <div class="question">問い：毎日の歯みがきの中で、口腔内の3Dマップを作り、清掃度や異常サインを自然に見える化できないか。</div>
+        <div class="grid-3">
+          <div class="panel">
+            <h3>気づき</h3>
+            <p>口の中は鏡でも見えにくく、奥歯や歯の裏側の状態を把握しにくい。</p>
+          </div>
+          <div class="panel">
+            <h3>課題</h3>
+            <p>清掃度や口腔環境の変化を、家庭で継続的に確認する手段が少ない。</p>
+          </div>
+          <div class="panel">
+            <h3>アイデア</h3>
+            <p>歯ブラシにセンサを入れ、歯面ごとの状態を3Dマップとして記録する。</p>
+          </div>
+        </div>
+      </div>
+      <footer>
+        <span>気づき → 問い → センサ案</span>
+        <span>03 / 09</span>
+      </footer>
+    </section>
+
+    <section class="slide" data-notes="ここが提案の中心です。医療診断ではなく、口腔内の3Dマップに清掃度や異常サインを重ねて、早めに気づくための仕組みだと説明します。">
+      <header>
+        <div>
+          <p class="eyebrow">提案の概要</p>
+          <h2>歯ブラシが口腔内をスキャンし、3D歯面マップを作る</h2>
+        </div>
+        <span class="tag">Service Concept</span>
+      </header>
+      <div class="content flow">
+        <div class="step">
+          <span class="step-num">1</span>
+          <h3>スキャンする</h3>
+          <p>小型カメラや光学センサで歯面と歯ぐきの形を読み取る。</p>
+        </div>
+        <div class="step">
+          <span class="step-num">2</span>
+          <h3>マップ化する</h3>
+          <p>歯ごと、歯面ごとに3D口腔マップとして記録する。</p>
+        </div>
+        <div class="step">
+          <span class="step-num">3</span>
+          <h3>状態を重ねる</h3>
+          <p>清掃度、酸性度、歯ぐき、ひびの可能性を色で表示する。</p>
+        </div>
+        <div class="step">
+          <span class="step-num">4</span>
+          <h3>行動につなげる</h3>
+          <p>磨き方改善、セルフケア、受診の目安を提案する。</p>
+        </div>
+      </div>
+      <footer>
+        <span>注意：診断ではなく、異常サインの見える化と受診支援</span>
+        <span>04 / 09</span>
+      </footer>
+    </section>
+
+    <section class="slide" data-notes="課題の注3と注4に対応するページです。3Dマップを作るセンサと、清掃度・口腔環境・ひびの可能性を見るセンサを分けて説明します。実現が難しくてもよい課題なので、近赤外やOCTも新しいセンサ提案として入れます。">
+      <header>
+        <div>
+          <p class="eyebrow">活用するセンサ</p>
+          <h2>3D口腔マップに、清掃度と健康状態のサインを重ねる</h2>
+        </div>
+        <span class="tag">Sensor</span>
+      </header>
+      <div class="content grid-3">
+        <div class="sensor">
+          <span class="sensor-num">1</span>
+          <h3>3Dスキャンセンサ</h3>
+          <p>小型カメラや構造化光で歯と歯ぐきの形を読み取る。</p>
+        </div>
+        <div class="sensor">
+          <span class="sensor-num">2</span>
+          <h3>光学・蛍光センサ</h3>
+          <p>歯垢、磨き残し、初期虫歯リスクのサインを補助的に見る。</p>
+        </div>
+        <div class="sensor">
+          <span class="sensor-num">3</span>
+          <h3>pH・VOCセンサ</h3>
+          <p>酸性度や口臭成分から、虫歯・歯周病リスクに関係する口腔環境を記録する。</p>
+        </div>
+        <div class="sensor">
+          <span class="sensor-num">4</span>
+          <h3>IMU・位置推定</h3>
+          <p>加速度・ジャイロで、どの歯面を磨いているか推定する。</p>
+        </div>
+        <div class="sensor">
+          <span class="sensor-num">5</span>
+          <h3>感圧センサ</h3>
+          <p>磨く力や噛みしめ傾向を見て、歯や歯ぐきへの負担を記録する。</p>
+        </div>
+        <div class="sensor">
+          <span class="sensor-num">6</span>
+          <h3>近赤外・OCTセンサ</h3>
+          <p>歯のひびや内部構造の変化を、注意サインとして見える化する。</p>
+        </div>
+      </div>
+      <footer>
+        <span>新しいデバイス案：水洗い可能な交換式3Dセンサブラシヘッド</span>
+        <span>05 / 09</span>
+      </footer>
+    </section>
+
+    <section class="slide app-slide" data-notes="ユーザーが見る画面を示します。3D口腔マップの上に、歯面ごとの清掃度、歯ぐき、ひびの可能性などを色で重ねるイメージです。診断ではなく、確認すべき場所を分かりやすく示します。">
+      <header>
+        <div>
+          <p class="eyebrow">アプリケーション</p>
+          <h2>3D口腔マップで、歯面ごとの清掃度と異常サインを見える化する</h2>
+        </div>
+        <span class="tag">3D Map</span>
+      </header>
+      <div class="content app-demo">
+        <div class="oral-3d-card" aria-label="3D teeth map mockup">
+          <div class="oral-3d-title">3D歯面マップ</div>
+          <div class="map-chip">赤い歯にマウスを合わせる</div>
+          <div class="scan-plane"></div>
+          <div class="arch-3d upper" aria-hidden="true">
+            <span class="tooth3d" style="--x:-108px; --y:26px; --r:-34deg; --z:1px;"></span>
+            <span class="tooth3d" style="--x:-78px; --y:4px; --r:-24deg; --z:7px;"></span>
+            <span class="tooth3d warn" style="--x:-45px; --y:-10px; --r:-12deg; --z:12px;"></span>
+            <span class="tooth3d" style="--x:-12px; --y:-16px; --r:-3deg; --z:16px;"></span>
+            <span class="tooth3d" style="--x:22px; --y:-14px; --r:7deg; --z:15px;"></span>
+            <span class="tooth3d alert crack tooth-hotspot" tabindex="0" aria-label="右上6の注意サインを表示" data-title="右上6：注意サイン" data-detect="歯面の反射低下、酸性状態、同じ場所の磨き残しが続いている。" data-possibility="初期虫歯リスク、歯面のひび、歯ぐき周辺の炎症サイン。" data-action="重点的に磨き、変化が続く場合は歯科で相談。" style="--x:55px; --y:-2px; --r:18deg; --z:10px;"></span>
+            <span class="tooth3d alert wisdom tooth-hotspot" tabindex="0" aria-label="親知らずの注意サインを表示" data-title="親知らず：抜歯相談サイン" data-detect="奥でブラシが届きにくく、磨き残し・口臭成分・虫歯らしい変化が続いている。" data-possibility="親知らずの虫歯、周囲の歯ぐきの炎症、隣の歯への影響の可能性。" data-action="放置せず、早めに歯科で抜歯が必要か相談。" style="--x:86px; --y:20px; --r:30deg; --z:4px;"></span>
+          </div>
+          <div class="arch-3d lower" aria-hidden="true">
+            <span class="tooth3d" style="--x:-104px; --y:22px; --r:-31deg; --z:2px;"></span>
+            <span class="tooth3d alert" style="--x:-73px; --y:2px; --r:-22deg; --z:6px;"></span>
+            <span class="tooth3d" style="--x:-40px; --y:-10px; --r:-10deg; --z:12px;"></span>
+            <span class="tooth3d" style="--x:-7px; --y:-15px; --r:0deg; --z:16px;"></span>
+            <span class="tooth3d warn" style="--x:27px; --y:-10px; --r:10deg; --z:13px;"></span>
+            <span class="tooth3d" style="--x:60px; --y:2px; --r:20deg; --z:8px;"></span>
+            <span class="tooth3d" style="--x:91px; --y:22px; --r:31deg; --z:3px;"></span>
+          </div>
+          <div class="scan-beam"></div>
+          <div class="oral-detail" id="oralDetail" aria-live="polite">
+            <h4 id="oralDetailTitle">右上6：注意サイン</h4>
+            <p><strong>検出:</strong> <span id="oralDetailDetect">歯面の反射低下、酸性状態、同じ場所の磨き残しが続いている。</span></p>
+            <p><strong>可能性:</strong> <span id="oralDetailPossibility">初期虫歯リスク、歯面のひび、歯ぐき周辺の炎症サイン。</span></p>
+            <p><strong>提案:</strong> <span id="oralDetailAction">重点的に磨き、変化が続く場合は歯科で相談。</span></p>
+          </div>
+          <div class="oral-stats" aria-hidden="true">
+            <div class="oral-stat">
+              <span>近日清掃度</span>
+              <strong>82%</strong>
+            </div>
+            <div class="oral-stat warn">
+              <span>歯周病リスク</span>
+              <strong>中</strong>
+            </div>
+            <div class="oral-stat alert">
+              <span>虫歯リスク</span>
+              <strong>高</strong>
+            </div>
+          </div>
+          <div class="map-legend">
+            <span><i></i>清掃良好</span>
+            <span class="warn"><i></i>磨き残し</span>
+            <span class="alert"><i></i>注意サイン</span>
+          </div>
+        </div>
+        <div class="grid-2">
+          <div class="panel">
+            <h3>歯面ごとの清掃度</h3>
+            <ul class="bullets">
+              <li>表側・裏側・奥歯などを色で表示する</li>
+              <li>磨き残しが多い場所をマップ上で知らせる</li>
+              <li>毎日の変化を記録して、改善を見える化する</li>
+            </ul>
+          </div>
+          <div class="panel">
+            <h3>口腔健康状態のサイン</h3>
+            <ul class="bullets">
+              <li>酸性度、歯ぐき、口臭の変化を重ねて表示する</li>
+              <li>歯周病リスクのサインは、歯ぐきや口腔環境の変化として扱う</li>
+              <li>将来的には歯のひびの可能性も注意サインとして表示する</li>
+              <li>医療判断は歯科医が行う設計にする</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <footer>
+        <span>生活を豊かにする視点：自分の口腔状態が見えることで不安を減らす</span>
+        <span>06 / 09</span>
+      </footer>
+    </section>
+
+    <section class="slide" data-notes="Society 5.0との関係を明示します。現実の口腔内を3Dデータ化し、AIが分析し、生活者に返す構造です。口腔のデジタルツインという言い方ができます。">
+      <header>
+        <div>
+          <p class="eyebrow">Society 5.0との関係</p>
+          <h2>現実の口腔内を3Dデータ化し、サイバー空間で分析して生活へ返す</h2>
+        </div>
+        <span class="tag">Cyber + Physical</span>
+      </header>
+      <div class="content society">
+        <div class="panel">
+          <h3>フィジカル空間</h3>
+          <p>歯ブラシが歯面形状、清掃度、pH、動き、圧力、口腔環境を毎日測定する。</p>
+        </div>
+        <div class="arrow">&gt;</div>
+        <div class="panel" style="background: var(--deep);">
+          <h3 style="color: var(--mint);">サイバー空間</h3>
+          <p style="color: #d9f1ed;">AIが3D口腔マップを更新し、清掃度や異常サインの傾向を推定する。</p>
+        </div>
+        <div class="arrow">&gt;</div>
+        <div class="panel">
+          <h3>人への還元</h3>
+          <p>3Dマップ、健康スコア、セルフケア、受診の目安として分かりやすく返す。</p>
+        </div>
+      </div>
+      <footer>
+        <span>人間中心：口腔のデジタルツインで、痛くなる前に行動できる社会へ</span>
+        <span>07 / 09</span>
+      </footer>
+    </section>
+
+    <section class="slide" data-notes="課題の注6に対応して、SDGsの番号を明記します。この提案では3番の健康と福祉に絞ります。">
+      <header>
+        <div>
+          <p class="eyebrow">SDGsとの関係</p>
+          <h2>この提案が関係するSDGsの目標番号</h2>
+        </div>
+        <span class="tag">3</span>
+      </header>
+      <div class="content sdg-grid">
+        <div class="sdg three">
+          <strong>3</strong>
+          <h3>すべての人に健康と福祉を</h3>
+          <p>虫歯、歯周病リスク、歯のひびなどの早期サインに気づき、予防的な行動や受診につなげる。</p>
+        </div>
+      </div>
+      <footer>
+        <span>SDGs 17目標の項番を明記</span>
+        <span>08 / 09</span>
+      </footer>
+    </section>
+
+    <section class="slide" data-notes="最後は議論につなげます。先生の指定通り、参加者からアイデアやアドバイスをもらうための問いを置きます。">
+      <header>
+        <div>
+          <p class="eyebrow">まとめ・相談したいこと</p>
+          <h2>毎日の歯みがきを、3D口腔マップによる予防支援につなげたい</h2>
+        </div>
+        <span class="tag">Discussion</span>
+      </header>
+      <div class="content grid-2">
+        <div class="panel">
+          <h3>まとめ</h3>
+          <ul class="bullets">
+            <li>歯ブラシで口腔内をスキャンし、3D口腔マップを作る</li>
+            <li>清掃度、虫歯リスク、歯周病リスク、歯のひびのサインを重ねて表示する</li>
+            <li>Society 5.0の形で、口腔データをAI分析し生活に返す</li>
+            <li>SDGs 3に関係する</li>
+          </ul>
+        </div>
+        <div class="panel">
+          <h3>意見をもらいたい点</h3>
+          <ul class="bullets">
+            <li>最初の対象は誰がよいか。子ども、高齢者、矯正中の人、一人暮らしの人など、どの層に一番価値があるか</li>
+            <li>センサや機能が多いので、最初は清掃度・虫歯リスクなどに絞るべきか、3D口腔マップとして統合するべきか</li>
+            <li>センサについてまだ詳しくないため、この構想をどの程度まで具体化すればよいか</li>
+            <li>歯の健康を守るために、毎日の歯みがきをどうすれば楽しく続けられるか</li>
+          </ul>
+        </div>
+      </div>
+      <footer>
+        <span>ご意見・アイデアをお願いします</span>
+        <span>09 / 09</span>
+      </footer>
+    </section>
+  </main>
+
+  <aside class="notes" id="notes"></aside>
+
+  <div class="controls" aria-label="slide controls">
+    <button id="prev" type="button" title="前のスライド">&lt;</button>
+    <button id="note" type="button" title="発表メモ">i</button>
+    <button id="next" type="button" title="次のスライド">&gt;</button>
+  </div>
+
+  <script>
+    const slides = Array.from(document.querySelectorAll(".slide"));
+    const notes = document.getElementById("notes");
+    const oralDetail = document.getElementById("oralDetail");
+    const oralDetailTitle = document.getElementById("oralDetailTitle");
+    const oralDetailDetect = document.getElementById("oralDetailDetect");
+    const oralDetailPossibility = document.getElementById("oralDetailPossibility");
+    const oralDetailAction = document.getElementById("oralDetailAction");
+    const toothHotspots = Array.from(document.querySelectorAll(".tooth-hotspot"));
+    let current = 0;
+
+    function render() {
+      slides.forEach((slide, index) => {
+        slide.classList.toggle("active", index === current);
+      });
+      notes.textContent = slides[current].dataset.notes || "";
+    }
+
+    function move(delta) {
+      current = Math.max(0, Math.min(slides.length - 1, current + delta));
+      render();
+    }
+
+    document.getElementById("prev").addEventListener("click", () => move(-1));
+    document.getElementById("next").addEventListener("click", () => move(1));
+    document.getElementById("note").addEventListener("click", () => {
+      notes.classList.toggle("visible");
+      render();
+    });
+
+    function showOralDetail(hotspot) {
+      oralDetailTitle.textContent = hotspot.dataset.title;
+      oralDetailDetect.textContent = hotspot.dataset.detect;
+      oralDetailPossibility.textContent = hotspot.dataset.possibility;
+      oralDetailAction.textContent = hotspot.dataset.action;
+      oralDetail.classList.add("visible");
+    }
+
+    function hideOralDetail() {
+      oralDetail.classList.remove("visible");
+    }
+
+    toothHotspots.forEach((hotspot) => {
+      hotspot.addEventListener("mouseenter", () => showOralDetail(hotspot));
+      hotspot.addEventListener("mouseleave", hideOralDetail);
+      hotspot.addEventListener("focus", () => showOralDetail(hotspot));
+      hotspot.addEventListener("blur", hideOralDetail);
+    });
+
+    window.addEventListener("keydown", (event) => {
+      if (event.key === "ArrowRight" || event.key === "PageDown" || event.key === " ") {
+        event.preventDefault();
+        move(1);
+      }
+      if (event.key === "ArrowLeft" || event.key === "PageUp") {
+        event.preventDefault();
+        move(-1);
+      }
+      if (event.key.toLowerCase() === "n") {
+        notes.classList.toggle("visible");
+        render();
+      }
+    });
+
+    render();
+  </script>
+</body>
+</html>
